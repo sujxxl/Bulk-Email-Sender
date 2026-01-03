@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bulk Email Sender</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=Montserrat:wght@700;900&family=Inter:wght@400;500;700&family=Fira+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: "Inter", "Roboto", Arial, sans-serif;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Montserrat", "Inter", Arial, sans-serif;
+        font-weight: 900;
+      }
+      .log-entry,
+      .font-mono {
+        font-family: "Fira Mono", "JetBrains Mono", "Menlo", "Monaco",
+          "Consolas", monospace;
+      }
+      .log-entry {
+        border-left: 4px solid;
+      }
+      .log-success {
+        border-color: #22c55e;
+      }
+      .log-fail {
+        border-color: #ef4444;
+      }
+      .log-info {
+        border-color: #dfcda5;
+      }
+      .log-client {
+        border-color: #f97316;
+      }
+      #test-spinner,
+      #send-spinner {
+        display: none;
+      }
+    </style>
+  </head>
+  <body class="bg-black text-gray-100">
+    <!-- Header -->
+    <header
+      class="flex flex-col md:flex-row justify-between items-center py-8 px-4 md:px-8 mb-8 border-b border-gray-800"
+    >
+      <!-- Logo -->
+      <div>
+        <span class="text-2xl font-bold font-['Syne'] tracking-wider z-50 relative text-white">ELGRACE TALENTS</span>
+      </div>
+      <!-- Branding -->
+      <div class="text-right">
+        <img
+          src="/public/elgrace-logo%20-%20Copy.png"
+          alt="Elgrace Talents logo"
+          class="h-12 w-auto inline-block"
+        />
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 md:px-8">
+      <div class="text-center mb-12">
+        <h1 class="text-5xl font-extrabold text-white mb-3 tracking-tight">
+          Bulk Email Sender
+        </h1>
+        <p class="text-base text-gray-400 font-light">
+          Send personalized cold emails safely.
+        </p>
+      </div>
+
+      <!-- Two column layout: Combined form on left (wider), Log on right -->
+      <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left: Combined Settings Card (2 columns wide) -->
+        <section
+          class="lg:col-span-2 bg-black/80 backdrop-blur-lg p-10 rounded-3xl shadow-2xl border border-[#dfcda5]/30 flex flex-col gap-8"
+        >
+          <!-- 1. SMTP Settings -->
+          <div>
+            <h2
+              class="text-2xl font-semibold text-white mb-5 border-b border-gray-700 pb-3"
+            >
+              1. SMTP Settings (Your Email)
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="smtp-server"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                  >SMTP Server</label
+                >
+                <input
+                  type="text"
+                  id="smtp-server"
+                   class="w-full bg-black/70 border border-gray-700 text-white rounded-lg p-3 focus:ring-[#dfcda5] focus:border-[#dfcda5] placeholder-gray-400 text-base"
+                  placeholder="e.g., smtp.secureserver.net"
+                  value="smtp.secureserver.net"
+                />
+              </div>
+              <div>
+                <label
+                  for="smtp-port"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                  >SMTP Port</label
+                >
+                <input
+                  type="number"
+                  id="smtp-port"
+                   class="w-full bg-black/70 border border-gray-700 text-white rounded-lg p-3 focus:ring-[#dfcda5] focus:border-[#dfcda5] placeholder-gray-400 text-base"
+                  placeholder="e.g., 465 or 587"
+                  value="465"
+                />
+              </div>
+            </div>
+            <div class="mt-4">
+              <label
+                for="smtp-email"
+                class="block text-sm font-medium text-gray-300 mb-2"
+                >Your Business Email</label
+              >
+              <input
+                type="email"
+                id="smtp-email"
+                 class="w-full bg-black/70 border border-gray-700 text-white rounded-lg p-3 focus:ring-[#dfcda5] focus:border-[#dfcda5] placeholder-gray-400 text-base"
+                  placeholder="e.g., you@yourcompany.com"
+                  value="creatives@elgrace.in"
+              />
+            </div>
+            <div class="mt-4">
+              <label
+                for="sender-name"
+                class="block text-sm font-medium text-gray-300 mb-2"
+                >Your Sender Name</label
+              >
+              <!-- FIX: Escaped {company_name} to {{company_name}} -->
+              <input
+                type="text"
+                id="sender-name"
+                 class="w-full bg-black/70 border border-gray-700 text-white rounded-lg p-3 focus:ring-[#dfcda5] focus:border-[#dfcda5] placeholder-gray-400 text-base"
+                  placeholder="e.g., GracefulMailer or Team Success"
+                  value="Elgrace Talents"
+              />
+            </div>
+            <div class="mt-4">
+              <label
+                for="smtp-pass"
+                class="block text-sm font-medium text-gray-300 mb-2"
+                >Your Email Password</label
+              >
+              <input
+                type="password"
+                id="smtp-pass"
+                 class="w-full bg-black/70 border border-gray-700 text-white rounded-lg p-3 focus:ring-[#dfcda5] focus:border-[#dfcda5] placeholder-gray-400 text-base"
+                placeholder="••••••••"
+              />
+            </div>
+            <button
+              id="test-btn"
+              class="w-full md:w-auto bg-[#dfcda5] hover:bg-[#c8b382] text-black font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-0.5 mt-6"
+            >
+              <div class="flex items-center justify-center">
+                <svg
+                  id="test-icon"
+                  class="w-5 h-5 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M10.05 4.575a1.5 1.5 0 1 0-3.001-3.001A1.5 1.5 0 0 0 10.05 4.575Zm-2.25 0a.75.75 0 1 0-1.5 0v5.25a.75.75 0 0 0 1.5 0v-5.25Zm1.5 0a.75.75 0 1 0-1.5 0v5.25a.75.75 0 0 0 1.5 0v-5.25Zm4.5 0a1.5 1.5 0 1 0-3.001-3.001A1.5 1.5 0 0 0 13.05 4.575Zm-2.25 0a.75.75 0 1 0-1.5 0v5.25a.75.75 0 0 0 1.5 0v-5.25Zm1.5 0a.75.75 0 1 0-1.5 0v5.25a.75.75 0 0 0 1.5 0v-5.25Zm4.5 0a1.5 1.5 0 1 0-3.001-3.001A1.5 1.5 0 0 0 18.05 4.575Zm-2.25 0a.75.75 0 1 0-1.5 0v5.25a.75.75 0 0 0 1.5 0v-5.25Zm1.5 0a.75.75 0 1 0-1.5 0v5.25a.75.75 0 0 0 1.5 0v-5.25Z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19.875 6.27A11.952 11.952 0 0 0 12 4.5c-2.79 0-5.43.8-7.68 2.25A11.96 11.96 0 0 0 12 21.75c2.79 0 5.43-.8 7.68-2.25A11.952 11.952 0 0 0 19.875 6.27Z"
+                  />
+                </svg>
+                <svg
+                  id="test-spinner"
+                  class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <span id="test-btn-text">Test Connection</span>
+              </div>
+            </button>
+          </div>
+
+          <!-- 2. Email Template -->
+          <div>
+            <h2
+              class="text-2xl font-semibold text-white mb-5 border-b border-gray-700 pb-3"
+            >
+              2. Email Template
+            </h2>
+            <p class="text-sm text-gray-300 mb-4">
+              Use any column from your CSV as a variable. Ex: {{first_name}},
+              {{company_name}}, {{role}}
+            </p>
+            <div>
+              <label
+                for="subject"
+                class="block text-sm font-medium text-gray-300 mb-2"
+                >Subject</label
+              >
+              <!-- FIX: Escaped {company_name} to {{company_name}} -->
+              <input
+                type="text"
+                id="subject"
+                 class="w-full bg-black/70 border border-gray-700 text-white rounded-lg p-3 focus:ring-[#dfcda5] focus:border-[#dfcda5] placeholder-gray-400 text-base"
+                placeholder="e.g., Following up with {{company_name}}"
+              />
+            </div>
+            <div class="mt-4">
+              <label
+                for="body"
+                class="block text-sm font-medium text-gray-300 mb-2"
+                >Body</label
+              >
+              <!-- FIX: Escaped {first_name} and {company_name} -->
+              <textarea
+                id="body"
+                rows="8"
+                 class="w-full bg-black/70 border border-gray-700 text-white rounded-lg p-3 focus:ring-[#dfcda5] focus:border-[#dfcda5] placeholder-gray-400 text-base"
+                placeholder="Hi {company_name}"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- 3. Send Emails -->
+          <div>
+            <h2
+              class="text-2xl font-semibold text-white mb-5 border-b border-gray-700 pb-3"
+            >
+              3. Send Emails
+            </h2>
+            <p class="text-sm text-gray-300 mb-4">
+              Upload a CSV file. It MUST have an 'email' column. The first row
+              should be headers.
+            </p>
+            <input
+              type="file"
+              id="csv-file"
+              class="block w-full text-sm text-gray-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#dfcda5] file:text-black hover:file:bg-[#c8b382]"
+              accept=".csv"
+            />
+            <button
+              id="send-btn"
+              class="w-full bg-transparent border border-[#dfcda5] text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:-translate-y-0.5 mt-6 hover:bg-[#dfcda5]/20"
+            >
+              <div class="flex items-center justify-center">
+                <svg
+                  id="send-icon"
+                  class="w-5 h-5 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+                  />
+                </svg>
+                <svg
+                  id="send-spinner"
+                  class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <span id="send-btn-text">Start Sending Emails</span>
+              </div>
+            </button>
+          </div>
+        </section>
+
+        <!-- Right: Log Section (Taller) -->
+        <section
+          class="lg:col-span-1 bg-black/80 backdrop-blur-lg p-10 rounded-3xl shadow-2xl border border-[#dfcda5]/30 flex flex-col"
+        >
+          <h2
+            class="text-2xl font-semibold text-white mb-5 border-b border-gray-700 pb-3"
+          >
+            Log
+          </h2>
+          <div
+            id="log-container"
+            class="flex-1 min-h-[700px] overflow-y-auto bg-black/50 rounded-xl p-5 font-mono text-sm space-y-3 border border-[#dfcda5]/30"
+          >
+            <div class="log-entry log-info p-3 rounded-md bg-black/60">
+              <p class="font-semibold text-[#dfcda5]">System</p>
+              <p class="text-gray-300">
+                Welcome! Please test your SMTP settings first.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer
+      class="mt-16 text-center text-gray-500 border-t border-gray-800 py-10 px-4 md:px-8"
+    >
+      <p class="text-xs text-gray-400">&copy; {{ year }} Elgrace Talents · Bulk Email Sender.</p>
+    </footer>
+
+    <!-- ALL { and } in the script must be doubled {{ and }} -->
+    <script>
+      function addLogEntry(type, message) {
+        const logContainer = document.getElementById("log-container");
+        const logEntry = document.createElement("div");
+        logEntry.className = `log-entry log-${type} p-3 rounded-md bg-gray-800/50`;
+        const colorClass =
+          type === "success"
+            ? "text-green-400"
+            : type === "fail"
+            ? "text-red-400"
+            : "text-[#dfcda5]";
+        logEntry.innerHTML = `
+          <p class="font-semibold ${colorClass}">${
+            type.charAt(0).toUpperCase() + type.slice(1)
+          }</p>
+          <p class="text-gray-300">${message}</p>
+        `;
+        logContainer.appendChild(logEntry);
+        logContainer.scrollTop = logContainer.scrollHeight;
+      }
+
+      document
+        .getElementById("test-btn")
+        .addEventListener("click", async () => {
+          const server = document.getElementById("smtp-server").value;
+          const port = document.getElementById("smtp-port").value;
+          const email = document.getElementById("smtp-email").value;
+          const password = document.getElementById("smtp-pass").value;
+          const senderName = document.getElementById("sender-name").value;
+
+          const testButton = document.getElementById("test-btn");
+          const testSpinner = document.getElementById("test-spinner");
+          const testIcon = document.getElementById("test-icon");
+          const testBtnText = document.getElementById("test-btn-text");
+
+          testButton.disabled = true;
+          testSpinner.style.display = "block";
+          testIcon.style.display = "none";
+          testBtnText.textContent = "Testing...";
+
+          addLogEntry("info", "Testing connection...");
+
+          try {
+            const response = await fetch("/test", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                server,
+                port,
+                email,
+                password,
+                senderName,
+              }),
+            });
+
+            const result = await response.json();
+            addLogEntry(result.success ? "success" : "fail", result.message);
+          } catch (error) {
+            addLogEntry(
+              "fail",
+              "An error occurred while testing the connection."
+            );
+          } finally {
+            testButton.disabled = false;
+            testSpinner.style.display = "none";
+            testIcon.style.display = "block";
+            testBtnText.textContent = "Test Connection";
+          }
+        });
+
+      document
+        .getElementById("send-btn")
+        .addEventListener("click", async () => {
+          const server = document.getElementById("smtp-server").value;
+          const port = document.getElementById("smtp-port").value;
+          const email = document.getElementById("smtp-email").value;
+          const password = document.getElementById("smtp-pass").value;
+          const senderName = document.getElementById("sender-name").value;
+          const subject = document.getElementById("subject").value;
+          const body = document.getElementById("body").value;
+          const fileInput = document.getElementById("csv-file");
+
+          if (!fileInput.files.length) {
+            addLogEntry("fail", "Please upload a CSV file.");
+            return;
+          }
+
+          const sendButton = document.getElementById("send-btn");
+          const sendSpinner = document.getElementById("send-spinner");
+          const sendIcon = document.getElementById("send-icon");
+          const sendBtnText = document.getElementById("send-btn-text");
+
+          sendButton.disabled = true;
+          sendSpinner.style.display = "block";
+          sendIcon.style.display = "none";
+          sendBtnText.textContent = "Sending...";
+
+          addLogEntry("info", "Starting to send emails...");
+
+          const formData = new FormData();
+          formData.append("server", server);
+          formData.append("port", port);
+          formData.append("email", email);
+          formData.append("password", password);
+          formData.append("senderName", senderName);
+          formData.append("subject", subject);
+          formData.append("body", body);
+          formData.append("file", fileInput.files[0]);
+
+          try {
+            const response = await fetch("/send", {
+              method: "POST",
+              body: formData,
+            });
+
+            const result = await response.json();
+            addLogEntry(result.success ? "success" : "fail", result.message);
+
+            if (result.results) {
+              result.results.forEach((entry) => {
+                addLogEntry(
+                  entry.status === "success" ? "success" : "fail",
+                  `${entry.email}: ${entry.error || "Email sent successfully."}`
+                );
+              });
+            }
+          } catch (error) {
+            addLogEntry("fail", "An error occurred while sending emails.");
+          } finally {
+            sendButton.disabled = false;
+            sendSpinner.style.display = "none";
+            sendIcon.style.display = "block";
+            sendBtnText.textContent = "Start Sending Emails";
+          }
+        });
+    </script>
+  </body>
+</html>
